@@ -47,17 +47,16 @@ public class StatsDumper {
         try {
             tempFile = File.createTempFile(UUID.randomUUID().toString(), ".tmp");
             try (BufferedWriter w =  new BufferedWriter(new FileWriter(tempFile))) {
-                w.write(String.format("Uptime: %s", Duration.ofMillis(System.currentTimeMillis() - startedAt)));
-                w.newLine();
-                w.newLine();
+                
+               
 
                 for (Map.Entry<TorrentId, PeerStats> e : aggregateStats.entrySet()) {
                     TorrentId torrentId = e.getKey();
                     PeerStats stats = e.getValue();
                     Map<Peer, PeerStats.Counter> counters = stats.getCounters();
 
-                    w.write(String.format("[%s]\ttotal known peers: %6d", torrentId, counters.size()));
-                    w.newLine();
+   
+               
                     for (Map.Entry<Peer, PeerStats.Counter> e2 : counters.entrySet()) {
                         Peer peer = e2.getKey();
                         String ip = peer.toString().substring(1);
@@ -68,10 +67,17 @@ public class StatsDumper {
                         long connected = counter.getConnectedTimes();
                         long disconnected = counter.getDisconnectedTimes();
                         String available = (connected == 0) ? "-" : getAvailableDataPercentage(counter) + "%";
+                            
 
-                        w.write(String.format("\t(%50s)\tdata available: %4s\ttimes discovered: %6d,\ttimes connected: %6d,\ttimes disconnected: %6d",
-                                result, available, discovered, connected, disconnected));
-                        w.newLine();
+
+//                        w.write(String.format("\t(%50s)\tdata available: %4s\ttimes discovered: %6d,\ttimes connected: %6d,\ttimes disconnected: %6d",
+//                                result, available, discovered, connected, disconnected));
+                       
+                            if(connected>0 && discovered>=1){
+                                w.write(result);
+                                w.newLine();
+                            }
+                          
                     }
                     w.newLine();
                     w.newLine();
